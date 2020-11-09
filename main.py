@@ -23,7 +23,7 @@ def run():
     for elem in ELEMENTS:
         upper_image = Image.open(INPUT_FILE_PATTERN.format(elem)).resize((DIM, DIM))
 
-        upper_path = [(DIM, DIM), (DIM, 0), (0, DIM), (DIM, DIM)]
+        upper_path = [(0, 0), (0, DIM), (DIM, 0), (0, 0)]
         upper_triangle = make_polygon(upper_path)
 
         for elem2 in ELEMENTS:
@@ -31,12 +31,12 @@ def run():
                 continue
             lower_image = Image.open(INPUT_FILE_PATTERN.format(elem2)).resize((DIM, DIM))
 
-            lower_path = [(0, 0), (0, DIM), (DIM, 0), (0, 0)]
+            lower_path = [(DIM, DIM), (DIM, 0), (0, DIM), (DIM, DIM)]
             lower_triangle = make_polygon(lower_path)
 
             new = Image.new('RGBA', (DIM, DIM))
-            new.paste(upper_image, (0, 0), mask=lower_triangle)
-            new.paste(lower_image, (0, 0), mask=upper_triangle)
+            new.paste(upper_image, (0, 0), mask=upper_triangle)
+            new.paste(lower_image, (0, 0), mask=lower_triangle)
             new.save(OUTPUT_FILE_PATTERN.format(elem, elem2))
 
 
