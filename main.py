@@ -1,6 +1,6 @@
-import numpy
 from PIL import Image
 from PIL import ImageDraw
+from PIL import ImageOps
 
 ELEMENTS = ['fire', 'water', 'wood', 'light', 'dark']
 INPUT_FILE_PATTERN = 'originals/{}.png'
@@ -9,34 +9,22 @@ OUTPUT_FILE_PATTERN = 'combined/{}_{}.png'
 DIM = 76
 
 
-def crop_image(image: Image, polygon):
+def crop_image(img: Image, polygon):
     """
-    Source: https://stackoverflow.com/questions/22588074/polygon-crop-clip-using-python-pil
-    :param image: PIL image object
-    :param path: List of tuples
+    Source: https://stackoverflow.com/questions/35620201/python-pil-make-pixels-outside-a-polygon-transparent
+    :param img: PIL image object
+    :param polygon: List of tuples
     :return:
     """
-
-    # convert to numpy (for convenience)
-    imArray = numpy.asarray(image.convert("RGBA"))
-
-    # create mask
-    maskIm = Image.new('L', (imArray.shape[1], imArray.shape[0]), 0)
-    ImageDraw.Draw(maskIm).polygon(polygon, outline=1, fill=1)
-    mask = numpy.array(maskIm)
-
-    # assemble new image (uint8: 0-255)
-    newImArray = numpy.empty(imArray.shape, dtype='uint8')
-
-    # colors (three first columns, RGB)
-    newImArray[:, :, :3] = imArray[:, :, :3]
-
-    # transparency (4th column)
-    newImArray[:, :, 3] = mask * 255
-
-    # back to Image from numpy
-    newIm = Image.fromarray(newImArray, "RGBA")
-    return newIm
+    back = Image.new('RGBA', img.size)
+    back.paste(img)
+    poly = Image.new('L', (512, 512))
+    pdraw = ImageDraw.Draw(poly)
+    pdraw.polygon(polygon, fill=255)
+    inverted_poly = ImageOps.invert(poly)
+    back.paste(poly, (0, 0), mask=inverted_poly)
+    back.show()
+    return back
 
 
 def run():
