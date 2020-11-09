@@ -1,7 +1,7 @@
 from PIL import Image
 from PIL import ImageDraw
 
-ELEMENTS = ['fire', 'water', 'wood', 'light', 'dark', 'null']
+ELEMENTS = ['fire', 'water', 'wood', 'light', 'dark', 'nil']
 INPUT_FILE_PATTERN = 'originals/{}.png'
 OUTPUT_FILE_PATTERN = 'combined/{}_{}.png'
 
